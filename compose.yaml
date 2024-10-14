@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  mariadb:
+    image: mariadb:latest
+    container_name: my_mariadb
+    environment:
+      MYSQL_ROOT_PASSWORD: root@admin
+      MYSQL_DATABASE: Post_Text_toxic
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root@admin
+    ports:
+      - "3306:3306"
+    volumes:
+      - mariadb_data:/var/lib/mysql
+
+volumes:
+  mariadb_data:
