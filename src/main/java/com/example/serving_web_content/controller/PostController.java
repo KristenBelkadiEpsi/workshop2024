@@ -20,9 +20,6 @@ public class PostController {
 
     @PostMapping
     public Post createPostText(@RequestBody Post post){
-        System.out.println("-".repeat(100));
-        System.out.println("OUI");
-        System.out.println("-".repeat(100));
         return postService.savePostText(post);
     }
 }
