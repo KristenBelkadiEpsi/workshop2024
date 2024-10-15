@@ -5,10 +5,10 @@ services:
     image: mariadb:latest
     container_name: my_mariadb
     environment:
-      MYSQL_ROOT_PASSWORD: root@admin
-      MYSQL_DATABASE: Post_Text_toxic
-      MYSQL_USER: root
-      MYSQL_PASSWORD: root@admin
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: post_text_toxic
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
     ports:
       - "3306:3306"
     volumes:
