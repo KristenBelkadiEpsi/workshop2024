@@ -8,5 +8,5 @@ class Post:
         return "(id = %s, text = %s, date_created = %s)" % (
             self.id,
             self.text,
-            self.date_create,
+            self.date_created,
         )
