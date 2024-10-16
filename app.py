@@ -46,10 +46,8 @@ def get_post():
     cursor = conn.cursor()
     cursor.execute("SELECT id, text FROM Post")
     rows = cursor.fetchall()
-    print("-" * 1000)
     posts = []
     for row in rows:
-        print(row)
         posts.append(Post(row[0], row[1]))
     return (json.dumps(posts, default=lambda p: p.__dict__), 200)
 
