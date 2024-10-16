@@ -1,4 +1,11 @@
 [project]
 name = "workshop2024"
 version = "1.0.0"
-dependencies = ["python-dotenv", "detoxify", "pandas", "flask", "mariadb"]
+dependencies = [
+    "flask-cors",
+    "python-dotenv",
+    "detoxify",
+    "pandas",
+    "flask",
+    "mariadb",
+]

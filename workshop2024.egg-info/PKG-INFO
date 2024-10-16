@@ -1,0 +1,9 @@
+Metadata-Version: 2.1
+Name: workshop2024
+Version: 1.0.0
+Requires-Dist: flask-cors
+Requires-Dist: python-dotenv
+Requires-Dist: detoxify
+Requires-Dist: pandas
+Requires-Dist: flask
+Requires-Dist: mariadb

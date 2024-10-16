@@ -7,12 +7,15 @@ import os
 import dotenv
 from models.post import Post
 import json
+from datetime import datetime
+from flask_cors import CORS
 
 dotenv.load_dotenv()
 model = Detoxify("multilingual")
 toxicity_limit = 0.6
 reset_mode = bool(os.environ.get("RESET_MODE"))
 app = Flask(__name__)
+CORS(app)
 config = {
     "host": os.environ.get("DB_HOST"),
     "port": int(os.environ.get("DB_PORT")),
@@ -34,7 +37,7 @@ conn.cursor().execute(
     """CREATE TABLE IF NOT EXISTS Post (
                             id BIGINT AUTO_INCREMENT PRIMARY KEY,
                             text TEXT NOT NULL,
-                            datecreated DATETIME DEFAULT CURRENT_TIMESTAMP
+                            date_created DATETIME NOT NULL
 )"""
 )
 
@@ -42,14 +45,23 @@ conn.cursor().execute(
 @app.route("/api/post", methods=["GET"])
 def get_post():
     cursor = conn.cursor()
-    cursor.execute("SELECT id, text, datecreated FROM Post")
+    cursor.execute("SELECT id, text, date_created FROM Post")
     rows = cursor.fetchall()
-    print("-" * 1000)
     posts = []
     for row in rows:
         print(row)
         posts.append(Post(row[0], row[1], row[2]))
-    return (json.dumps(posts, default=lambda p: p.__dict__), 200)
+    return (
+        json.dumps(
+            posts,
+            default=lambda p: {
+                "id": p.id,
+                "text": p.text,
+                "date_created": p.date_created.isoformat(),
+            },
+        ),
+        200,
+    )
 
 
 @app.route("/api/post", methods=["POST"])
@@ -59,6 +71,7 @@ def create_post():
         return make_response("", 404)
     else:
         text = request_json["text"]
+        date_created = datetime.fromisoformat(request_json["date_created"])
         if text is None:
             return make_response("", 404)
         else:
@@ -67,13 +80,14 @@ def create_post():
             is_toxic = bool(data_frame["toxicity"][0] >= toxicity_limit)
             if not is_toxic:
                 cursor = conn.cursor()
-                cursor.execute("INSERT INTO Post (text) VALUES (?)", (text,))
+                cursor.execute(
+                    "INSERT INTO Post (text, date_created) VALUES (?, ?)",
+                    (text, date_created),
+                )
                 cursor.execute("SELECT LAST_INSERT_ID()")
                 id = cursor.fetchone()[0]
-                cursor.execute("SELECT datecreated FROM Post WHERE id = ?", (id,))
-                datecreated = cursor.fetchone()[0]
                 cursor.close()
-                post = Post(id, text, datecreated)
+                post = Post(id, text, date_created)
                 return make_response(json.dumps(post.__dict__), 200)
             else:
                 return make_response("", 400)

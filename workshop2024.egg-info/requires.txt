@@ -1,0 +1,6 @@
+flask-cors
+python-dotenv
+detoxify
+pandas
+flask
+mariadb
