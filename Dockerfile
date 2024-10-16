@@ -1,7 +1,9 @@
-FROM python:3.9-slim
+FROM python:3.9
 WORKDIR /app
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-COPY . .
-EXPOSE 8080
+COPY . /app
+RUN apt-get update
+RUN apt-get install libmariadb3 libmariadb-dev -y
+RUN pip3 install . --use-feature=fast-deps
+RUN mariadb start
+EXPOSE 9090
 CMD ["python", "app.py"]
