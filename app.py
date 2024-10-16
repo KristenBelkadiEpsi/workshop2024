@@ -90,7 +90,7 @@ def create_post():
                 post = Post(id, text, date_created)
                 return make_response(json.dumps(post.__dict__), 200)
             else:
-                return make_response("", 400)
+                return make_response("", 403)
 
 
 if __name__ == "__main__":
