@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mon Blog</title>
+    <style>
+        body {
+            background-image: url("./resource/background.jpg");
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .reseau-container {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            color: #333;
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+            box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            background-color: #fff;
+        }
+
+        h1,
+        h2 {
+            text-align: center;
+            color: #5A5A5A;
+            margin-bottom: 20px;
+            font-family: 'Segoe UI', sans-serif;
+            letter-spacing: 2px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            color: #333;
+        }
+
+        textarea {
+            width: 100%;
+            height: 120px;
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: inset 0px 2px 5px rgba(0, 0, 0, 0.05);
+            font-size: 1rem;
+            background-color: #fafafa;
+            box-sizing: border-box;
+        }
+
+        button {
+            display: block;
+            width: 100%;
+            padding: 10px 20px;
+            background: #007BFF;
+            border: none;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            margin-bottom: 30px;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        .post {
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin-bottom: 15px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+        }
+
+        .post:hover {
+            transform: translateY(-5px);
+            box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .post .date {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 0.8rem;
+            color: #999;
+        }
+
+        .post .content {
+            font-size: 1.2rem;
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        #popin {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 350px;
+            padding: 25px;
+            background-color: white;
+            box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            text-align: center;
+            z-index: 1000;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        #overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            z-index: 999;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .alert-title {
+            font-size: 1.5rem;
+            color: #E74C3C;
+            margin-bottom: 10px;
+        }
+
+        .alert-message {
+            font-size: 1rem;
+            color: #333;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="reseau-container">
+        <div id="overlay"></div>
+
+        <div id="popin">
+            <h2 class="alert-title">Alerte !</h2>
+            <p class="alert-message">Votre publication n'a pas pu être créée, veuillez vérifier si son contenu n'est pas
+                toxique.</p>
+        </div>
+
+        <h1>Mon Blog</h1>
+        <textarea id="content" placeholder="Écrivez votre publication..."></textarea>
+        <button onclick="submitPost()">Publier</button>
+
+        <h2>Publications :</h2>
+        <div id="posts"></div>
+    </div>
+
+    <script>
+        function formatDate(dateString) {
+            const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
+            const date = new Date(dateString);
+            return date.toLocaleDateString('fr-FR', options);
+        }
+
+        async function fetchPosts() {
+            const response = await fetch('http://localhost:9090/api/post');
+            const posts = await response.json();
+            const postsContainer = document.getElementById('posts');
+            postsContainer.innerHTML = '';
+
+            posts.reverse().forEach(post => {
+                const postDiv = document.createElement('div');
+                postDiv.className = 'post';
+
+                const postDate = document.createElement('div');
+                postDate.className = 'date';
+                postDate.textContent = "publié le " + formatDate(post.date_created);
+
+                const postContent = document.createElement('div');
+                postContent.className = 'content';
+                postContent.textContent = post.text;
+
+                postDiv.appendChild(postDate);
+                postDiv.appendChild(postContent);
+                postsContainer.appendChild(postDiv);
+            });
+        }
+
+        async function submitPost() {
+            const content = document.getElementById('content').value;
+            if (content.trim() === '') {
+                alert('Le contenu de la publication ne peut pas être vide.');
+                return;
+            }
+
+            const response = await fetch('http://localhost:9090/api/post', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ text: content, date_created: new Date() })
+            });
+
+            if (response.status == '403') {
+                showPopin()
+            }
+            document.getElementById('content').value = '';
+            fetchPosts();
+        }
+
+        // Charger les publications au démarrage
+        fetchPosts();
+    </script>
+
+</body>
+
+</html>
