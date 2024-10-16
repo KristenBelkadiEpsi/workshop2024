@@ -1,0 +1,4 @@
+[project]
+name = "workshop2024"
+version = "1.0.0"
+dependencies = ["pandas", "discord.py", "python-dotenv", "detoxify", "pandas"]

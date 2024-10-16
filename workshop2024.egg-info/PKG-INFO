@@ -1,0 +1,8 @@
+Metadata-Version: 2.1
+Name: workshop2024
+Version: 1.0.0
+Requires-Dist: pandas
+Requires-Dist: discord.py
+Requires-Dist: python-dotenv
+Requires-Dist: detoxify
+Requires-Dist: pandas
