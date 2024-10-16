@@ -172,6 +172,17 @@
     </div>
 
     <script>
+        function showPopin() {
+            const popin = document.getElementById('popin');
+            const overlay = document.getElementById('overlay');
+            popin.style.display = 'block';
+            overlay.style.display = 'block';
+
+            setTimeout(function () {
+                popin.style.display = 'none';
+                overlay.style.display = 'none';
+            }, 3000);
+        }
         function formatDate(dateString) {
             const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
             const date = new Date(dateString);
