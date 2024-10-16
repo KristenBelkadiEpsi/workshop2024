@@ -1,18 +1,21 @@
 from detoxify import Detoxify
 import mariadb.connections
 import pandas as pd
-from flask import Flask, request, make_response, g
+from flask import Flask, request, make_response
+from flask_cors import CORS
 import mariadb
 import os
 import dotenv
 from models.post import Post
 import json
-
+import datetime
 dotenv.load_dotenv()
 model = Detoxify("multilingual")
 toxicity_limit = 0.6
 reset_mode = bool(os.environ.get("RESET_MODE"))
 app = Flask(__name__)
+CORS(app)
+
 config = {
     "host": os.environ.get("DB_HOST"),
     "port": int(os.environ.get("DB_PORT")),
@@ -55,11 +58,11 @@ def get_post():
 def create_post():
     request_json = request.json
     if request_json is None:
-        return make_response("", 404)
+        return make_response("", 400)
     else:
         text = request_json["text"]
         if text is None:
-            return make_response("", 404)
+            return make_response("", 400)
         else:
             predict = model.predict([text])
             data_frame = pd.DataFrame(predict).round(5)
@@ -73,7 +76,7 @@ def create_post():
                 post = Post(id, text)
                 return make_response(json.dumps(post.__dict__), 200)
             else:
-                return make_response("", 400)
+                return make_response("", 403)
 
 
 if __name__ == "__main__":
