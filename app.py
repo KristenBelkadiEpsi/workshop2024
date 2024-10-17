@@ -26,10 +26,10 @@ async def on_ready():
 
 
 @bot.event
-async def on_message(message):
+async def on_message(message:discord.Message):
     if message.author != bot.user:
         if is_toxic(message.content):
-            await message.reply("Votre message à été suprimé car jugé toxique")
+            await message.author.send("Votre message à été suprimé car jugé toxique")
             await message.delete()
 
 @bot.command()
