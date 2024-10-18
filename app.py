@@ -10,9 +10,8 @@ toxicity_limit = 0.6
 
 
 dotenv.load_dotenv()
-# Intention d'authentification (requis avec les nouvelles versions de discord.py)
 intents = discord.Intents.default()
-intents.message_content = True  # Permet au bot de lire le contenu des messages
+intents.message_content = True
 bot = commands.Bot(command_prefix="!", intents=intents)
 
 def is_toxic(text):
